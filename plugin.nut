@@ -1,4 +1,9 @@
 // --------------------
+// Load Modules
+// --------------------
+fe.load_module("helpers");
+
+// --------------------
 // Plugin User Options
 // --------------------
 class UserConfig </ help="A plugin that selects a random game after a period of inactivity." /> {
@@ -17,6 +22,9 @@ class Sequencer {
   time = null;
   delayTime = null;
   signalTime = null;
+  target = null;
+  active = null;
+  signal = null;
 
   constructor() {
     config = fe.get_config();
@@ -32,10 +40,12 @@ class Sequencer {
     time = 0;
     delayTime = config["delayTime"]*1000;
     signalTime = 0;
+    active = false;
 
     fe.add_ticks_callback(this, "updateTime");
     fe.add_transition_callback(this, "updateSignalTime");
-    fe.add_ticks_callback(this, "randomGame");
+    fe.add_ticks_callback(this, "status");
+    fe.add_ticks_callback(this, "nextGame");
   }
 
   function updateTime(ttime) {
@@ -47,8 +57,22 @@ class Sequencer {
     return false;
   }
 
-  function randomGame(ttime) {
-    if (ttime >= signalTime + delayTime) fe.signal("random_game");
+  function status(ttime) {
+    if (!active && (ttime >= signalTime + delayTime)) {
+      target = randInt(fe.list.size - 1);
+      if (fe.list.index == target) return;
+      active = true;
+
+      if (fe.list.size - 1 - fe.list.index - target > 0) signal = "next_game";
+      if (fe.list.size - 1 - fe.list.index - target < 0) signal = "prev_game";
+    }
+    if (fe.list.index == target) active = false;
+  }
+
+  function nextGame(ttime) {
+    if (active) {
+      fe.signal(signal);
+    }
   }
 }
 fe.plugin["Sequencer"] <- Sequencer();
