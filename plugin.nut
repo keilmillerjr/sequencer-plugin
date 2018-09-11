@@ -59,14 +59,18 @@ class Sequencer {
 
   function status(ttime) {
     if (!active && (ttime >= signalTime + delayTime)) {
-      target = randInt(fe.list.size - 1);
-      if (fe.list.index == target) return;
       active = true;
+      target = randInt(fe.list.size - 1);
 
-      if (fe.list.size - 1 - fe.list.index - target > 0) signal = "next_game";
-      if (fe.list.size - 1 - fe.list.index - target < 0) signal = "prev_game";
+      // if difference in between is less than around
+      if ( (abs(fe.list.index - target)) <= (abs(fe.list.size - abs(fe.list.index - target))) )
+        (target >= fe.list.index) ? signal = "next_game" : signal = "prev_game";
+      else
+        (fe.list.index >= target) ? signal = "next_game" : signal = "prev_game";
+
+      nextGame(ttime);
     }
-    if (fe.list.index == target) active = false;
+    if (active && (fe.list.index == target)) active = false;
   }
 
   function nextGame(ttime) {
