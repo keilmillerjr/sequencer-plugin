@@ -45,7 +45,6 @@ class Sequencer {
     fe.add_ticks_callback(this, "updateTime");
     fe.add_transition_callback(this, "updateSignalTime");
     fe.add_ticks_callback(this, "status");
-    fe.add_ticks_callback(this, "nextGame");
   }
 
   function updateTime(ttime) {
@@ -58,6 +57,7 @@ class Sequencer {
   }
 
   function status(ttime) {
+    // Activate Sequencer
     if (!active && (ttime >= signalTime + delayTime)) {
       active = true;
       target = randInt(fe.list.size - 1);
@@ -67,16 +67,19 @@ class Sequencer {
         (target >= fe.list.index) ? signal = "next_game" : signal = "prev_game";
       else
         (fe.list.index >= target) ? signal = "next_game" : signal = "prev_game";
-
-      nextGame(ttime);
     }
-    if (active && (fe.list.index == target)) active = false;
+
+    // Deactivate or Go To Next Game
+    if (active) {
+      if (fe.list.index == target) active = false;
+      else nextGame();
+    }
   }
 
-  function nextGame(ttime) {
-    if (active) {
-      fe.signal(signal);
-    }
+  // PRIVATE FUNCTIONS
+
+  function nextGame() {
+    fe.signal(signal);
   }
 }
 fe.plugin["Sequencer"] <- Sequencer();
