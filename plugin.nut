@@ -45,6 +45,7 @@ class Sequencer {
     fe.add_ticks_callback(this, "updateTime");
     fe.add_transition_callback(this, "updateSignalTime");
     fe.add_ticks_callback(this, "status");
+    fe.add_signal_handler(this, "blockSignals");
   }
 
   function updateTime(ttime) {
@@ -74,6 +75,29 @@ class Sequencer {
       if (fe.list.index == target) active = false;
       else nextGame();
     }
+  }
+
+  function blockSignals(signal_str) {
+    local blocked = null;
+
+    if (active) {
+      (signal != "next_game") ? blocked = "next_game" : "prev_game";
+      switch (signal_str) {
+        case blocked:
+        case "prev_page":
+        case "next_page":
+        case "random_game":
+        case "prev_letter":
+        case "next_letter":
+        case "prev_display":
+        case "next_display":
+        case "next_filter":
+        case "prev_filter":
+          return true;
+      }
+    }
+
+    return false;
   }
 
   // PRIVATE FUNCTIONS
