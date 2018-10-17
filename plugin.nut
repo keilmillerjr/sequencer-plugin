@@ -12,7 +12,7 @@ class UserConfig </ help="A plugin that selects a random game after a period of 
 	</ label="Delay Time",
 		help="The amount of inactivity (seconds) before selecting a random game.",
 		order=1 />
-		delayTime="30";
+	delayTime="30";
 }
 
 // --------------------
