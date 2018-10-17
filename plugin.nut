@@ -74,8 +74,10 @@ class Sequencer {
 		switch (ttype) {
 			case Transition.ToGame:
 				status = 0;
+				break;
 			case Transition.FromGame:
 				status = 2;
+				break;
 		}
 
 		return false;
