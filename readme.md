@@ -13,6 +13,7 @@ You may need to change file paths as necessary as each platform (windows, mac, l
 ## Install Files
 
 1. Copy plugin files to `$HOME/.attract/plugins/Sequencer/`.
+2. The [Helpers module](https://github.com/keilmillerjr/helpers-module) is **REQUIRED** for you to install. The plugin will not work correctly without it.
 
 ## Usage
 
