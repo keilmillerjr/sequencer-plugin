@@ -25,7 +25,8 @@ class Sequencer {
 	currentTime = null;
 	delayTime = null;
 	signalTime = null;
-	status = null;
+	status = null; // 0 = off, 1 = on, 2 = ready
+	introStatus = null; // 0 = off, 1 = on
 
 	constructor() {
 		config = fe.get_config();
@@ -38,10 +39,11 @@ class Sequencer {
 				config["delayTime"] = 30;
 			}
 
-		status = 1;
 		currentTime = 0;
 		delayTime = config["delayTime"]*1000;
 		signalTime = 0;
+		status = 1;
+		introStatus = 0;
 
 		fe.add_ticks_callback(this, "ticks");
 		fe.add_transition_callback(this, "transitions");
@@ -50,13 +52,30 @@ class Sequencer {
 	// ----- Ticks Callbacks -----
 
 	function ticks(ttime) {
+		// Current Time (accessible from transitions)
 		currentTime = ttime;
 
+		// Intro Status
+		switch (IntroActive) {
+			case true:
+				introStatus = 1;
+				status = 0;
+				break;
+			case false:
+				if (introStatus == 1) {
+					introStatus = 0;
+					status = 1;
+				}
+				break;
+		}
+
+		// Update Signal Time and Status (after intro or FromGame)
 		if (status == 2) {
 			signalTime = currentTime;
 			status = 1;
-			}
+		}
 
+		// Logic
 		if (status == 1 && (currentTime >= signalTime + delayTime)) {
 			local targetIndex = randInt(fe.list.size - 1);
 			local direction = randInt(1);
