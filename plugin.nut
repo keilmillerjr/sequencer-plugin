@@ -42,7 +42,7 @@ class Sequencer {
 		currentTime = 0;
 		delayTime = config["delayTime"]*1000;
 		signalTime = 0;
-		status = 1;
+		status = 2;
 		introStatus = 0;
 
 		fe.add_ticks_callback(this, "ticks");
@@ -57,14 +57,16 @@ class Sequencer {
 
 		// Intro Status
 		switch (IntroActive) {
-			case true:
-				introStatus = 1;
-				status = 0;
+			case 1:
+				if (introStatus == 0) {
+					introStatus = 1;
+					status = 0;
+				}
 				break;
-			case false:
+			case 0:
 				if (introStatus == 1) {
 					introStatus = 0;
-					status = 1;
+					status = 2;
 				}
 				break;
 		}
